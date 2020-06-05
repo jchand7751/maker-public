@@ -1,0 +1,49 @@
+// Available variables
+// ${workspaceRoot}: the root folder of the team
+// ${file}: the current opened file
+// ${fileBasename}: the current opened file's basename
+// ${fileDirname}: the current opened file's dirname
+// ${fileExtname}: the current opened file's extension
+// ${cwd}: the current working directory of the spawned process
+
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    // "version": "2.0.0",
+    //"tasks": [
+    //    {
+    //        "label": "echo",
+    //        "type": "shell",
+    //        "command": "get-process"
+    //    }
+    //]
+    "version": "2.0.0",
+
+    // The Powershell command
+    "command": "powershell",
+
+    // Windows Powershell command
+    "windows": {
+        "command": "c:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    },
+
+    // Show the output windows only if unrecongized errors occur.
+    //"showOutput": "always",
+
+    // args to run current PowerShell script with noprofile option.
+    //"args": ["-noprofile", "-File", "${file}"]
+    //"Add-Content -Path c:\\vscode\\test.txt -value",
+
+    "args": [
+        "-noprofile",
+        "-Command",
+        "Copy-Item -Path '${file}' -Destination 'D:\\' -force"
+        //"'",
+        //"${file}",
+        //"'"
+    ],
+    "group": {
+        "kind": "build",
+        "isDefault": true
+    }
+}
