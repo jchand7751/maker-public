@@ -24,12 +24,6 @@ runcount = 0
 wifi = adafruit_esp32spi_wifimanager.ESPSPI_WiFiManager(pyportal._esp, secrets, None)
 mqtt_topic = secrets["mqtopic"]
 
-### WiFi ###
-# Connect to WiFi
-print("Connecting to WiFi...")
-wifi.connect()
-print("Connected!")
-
 ### Code - Definitions ###
 
 def MQSetup():
@@ -109,7 +103,7 @@ def displayloop():
     group.pop()
     group.pop()
     time.sleep(1)
-    
+
     # Show the 7 day stat page to cover the MQTT reconnect (start of next loop)
     imagedisplay("swimbikeruntop")
     writemessage("7 Day Totals \n Activities: %s \n Time: %s" %(summaryList["Total Activities"], summaryList["Total Time"]), 1, 70, "green")
@@ -173,6 +167,14 @@ def splashScreen(color):
     group.append(splashSprite)
 
 ### Code ###
+
+### WiFi ###
+# Connect to WiFi
+print("Connecting to WiFi...")
+wifi.connect()
+print("Connected!")
+
+### Display Setup ###
 # Create the display group
 group = displayio.Group(max_size=3)
 # Try to fix the weird refresh thing
@@ -180,7 +182,8 @@ display.refresh(target_frames_per_second=60)
 # Show the initial solid color background
 splashScreen("white")
 display.show(group)
-# Start the main loop
+
+### Main Loop ###
 while True:
     # Test wifi connectivity to the MQTT broker
     try:
@@ -189,6 +192,7 @@ while True:
         print("Wifi disconnected, reconnecting")
         wifi.connect()
         print("Connected!")
+
     # Call the MQTT definition to subscribe, check for the retained message, and then disconnect
     try:
         MQSetup()
@@ -197,6 +201,7 @@ while True:
         print("Except: {0}".format(err))
         print("Couldn't connect via MQTT")
         mqstatus = "Failed"
+
     # Run the display loop if the message isn't blank
     if currentmessage != "null":
         summaryList = eval(currentmessage)
@@ -205,4 +210,3 @@ while True:
     else:
         print("No data from MQTT!")
         time.sleep(10)
-    
