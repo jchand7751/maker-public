@@ -208,9 +208,12 @@ while True:
 
     # Run the display loop if the message isn't blank
     if currentmessage != "null":
+        print("Starting display loop")
         summaryList = eval(currentmessage)
         displayloop()
+        print("Finishing display loop")
         runcount = runcount + 1
+        print(runcount)
     else:
         print("No data from MQTT!")
         time.sleep(10)
