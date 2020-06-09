@@ -187,7 +187,9 @@ display.show(group)
 while True:
     # Test wifi connectivity to the MQTT broker
     try:
+        print("Testing wifi")
         wifi.ping(secrets["broker"])
+        print("Wifi confirmed")
     except:
         print("Wifi disconnected, reconnecting")
         wifi.connect()
@@ -195,8 +197,10 @@ while True:
 
     # Call the MQTT definition to subscribe, check for the retained message, and then disconnect
     try:
+        print("Starting MQTT")
         MQSetup()
         mqstatus = "Ok"
+        print("MQTT confirmed")
     except Exception as err:
         print("Except: {0}".format(err))
         print("Couldn't connect via MQTT")
