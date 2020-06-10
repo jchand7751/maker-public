@@ -31,22 +31,39 @@ def MQSetup():
     # Create the socket
     MQTT.set_socket(socket, pyportal._esp)
 
-    # Set up a MiniMQTT Client
-    mqtt_client = MQTT.MQTT(broker=secrets["broker"], username=secrets["user"], password=secrets["pass"], is_ssl=False, port=16392)
+    try:
+        # Set up a MiniMQTT Client
+        mqtt_client = MQTT.MQTT(broker=secrets["broker"], username=secrets["user"], password=secrets["pass"], is_ssl=False, port=16392)
+    except Exception as err:
+        print("Except: {0}".format(err))
+        print("Failed to create MQTT Client")
+    
 
     # Setup the callback methods
     mqtt_client.on_connect = connected
     mqtt_client.on_disconnect = disconnected
     mqtt_client.on_message = message
 
-    # Connect and wait for fully established connection
-    mqtt_client.connect()
+    try:
+        # Connect and wait for fully established connection
+        mqtt_client.connect()
+    except Exception as err:
+        print("Except: {0}".format(err))
+        print("Failed to connect the MQTT client")
     time.sleep(3)
-    # Get the retained message (wait until it shows up)
-    mqtt_client.loop()
+    try:
+        # Get the retained message (wait until it shows up)
+        mqtt_client.loop()
+    except Exception as err:
+        print("Except: {0}".format(err))
+        print("Failed to pull the retained message")
     time.sleep(3)
-    # Disconnect and cleanup so we don't have socket issues on future loops
-    mqtt_client.disconnect()
+    try:
+        # Disconnect and cleanup so we don't have socket issues on future loops
+        mqtt_client.disconnect()
+    except Exception as err:
+        print("Except: {0}".format(err))
+        print("Failed to disconnect from MQTT broker")
 
 def connected(client, userdata, flags, rc):
     # This function will be called when the client is connected
