@@ -8,6 +8,8 @@ from adafruit_esp32spi import adafruit_esp32spi_wifimanager
 import adafruit_esp32spi.adafruit_esp32spi_socket as socket
 import adafruit_minimqtt as MQTT
 import adafruit_pyportal
+import microcontroller
+
 try:
     from secrets import secrets
 except ImportError:
@@ -202,6 +204,10 @@ display.show(group)
 
 ### Main Loop ###
 while True:
+    if runcount > 500:
+        # Time for a reboot
+        microcontroller.reset()
+
     # Test wifi connectivity to the MQTT broker
     try:
         print("Testing wifi")
