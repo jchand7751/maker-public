@@ -204,7 +204,7 @@ display.show(group)
 
 ### Main Loop ###
 while True:
-    if runcount > 500:
+    if runcount > 300:
         # Time for a reboot
         microcontroller.reset()
 
