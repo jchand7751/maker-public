@@ -29,29 +29,7 @@ mqtt_topic = secrets["mqtopic"]
 ### Code - Definitions ###
 
 def MQSetup():
-    # MQTT connect, subscribe, and disconnect steps
-    # Create the socket
-    MQTT.set_socket(socket, pyportal._esp)
-
-    try:
-        # Set up a MiniMQTT Client
-        mqtt_client = MQTT.MQTT(broker=secrets["broker"], username=secrets["user"], password=secrets["pass"], is_ssl=False, port=16392)
-    except Exception as err:
-        print("Except: {0}".format(err))
-        print("Failed to create MQTT Client")
-    
-
-    # Setup the callback methods
-    mqtt_client.on_connect = connected
-    mqtt_client.on_disconnect = disconnected
-    mqtt_client.on_message = message
-
-    try:
-        # Connect and wait for fully established connection
-        mqtt_client.connect()
-    except Exception as err:
-        print("Except: {0}".format(err))
-        print("Failed to connect the MQTT client")
+    global mqtt_client
     time.sleep(3)
     try:
         # Get the retained message (wait until it shows up)
@@ -62,12 +40,6 @@ def MQSetup():
         wifi.reset()
         mqtt_client.reconnect()
     time.sleep(3)
-    #try:
-        # Disconnect and cleanup so we don't have socket issues on future loops
-    #    mqtt_client.disconnect()
-    #except Exception as err:
-    #    print("Except: {0}".format(err))
-    #    print("Failed to disconnect from MQTT broker")
 
 def connected(client, userdata, flags, rc):
     # This function will be called when the client is connected
@@ -204,14 +176,36 @@ display.refresh(target_frames_per_second=60)
 splashScreen("white")
 display.show(group)
 
+### MQTT Setup ###
+MQTT.set_socket(socket, pyportal._esp)
+try:
+    # Set up a MiniMQTT Client
+    mqtt_client = MQTT.MQTT(broker=secrets["broker"], username=secrets["user"], password=secrets["pass"], is_ssl=False, port=16392)
+except Exception as err:
+    print("Except: {0}".format(err))
+    print("Failed to create MQTT Client")
+    
+
+# Setup the callback methods
+mqtt_client.on_connect = connected
+mqtt_client.on_disconnect = disconnected
+mqtt_client.on_message = message
+
+try:
+    # Connect and wait for fully established connection
+    mqtt_client.connect()
+except Exception as err:
+    print("Except: {0}".format(err))
+    print("Failed to connect the MQTT client")
+
 ### Main Loop ###
 while True:
     if runcount == 0:
         # Time for a reboot
         #microcontroller.reset()
         # Run MQSetup on the first run only
-        MQSetup()
-
+        #MQSetup()
+        print("First run!")
     # Test wifi connectivity to the MQTT broker
     try:
         print("Testing wifi")
@@ -223,21 +217,27 @@ while True:
         print("Connected!")
 
     # Call the MQTT definition to subscribe, check for the retained message, and then disconnect
-    try:
-        #print("Starting MQTT")
+    #try:
+    #    print("Starting MQTT")
         #MQSetup()
         #mqstatus = "Ok"
-        #print("MQTT confirmed")
+    #    print("MQTT confirmed")
+        #mqtt_client.loop()
+    #except Exception as err:
+    #    print("Except: {0}".format(err))
+    #    print("Couldn't connect via MQTT")
+        #mqstatus = "Failed"
+
+    time.sleep(3)
+    try:
+        # Get the retained message (wait until it shows up)
         mqtt_client.loop()
     except Exception as err:
         print("Except: {0}".format(err))
         print("Failed to pull the retained message")
         wifi.reset()
         mqtt_client.reconnect()
-    #except Exception as err:
-    #    print("Except: {0}".format(err))
-        #print("Couldn't connect via MQTT")
-        #mqstatus = "Failed"
+    time.sleep(3)
 
     # Run the display loop if the message isn't blank
     if currentmessage != "null":
