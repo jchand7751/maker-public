@@ -235,7 +235,7 @@ while True:
     except Exception as err:
         print("Except: {0}".format(err))
         print("Failed to pull the retained message")
-        wifi.reset()
+        #wifi.reset()
         mqtt_client.reconnect()
     time.sleep(3)
 
