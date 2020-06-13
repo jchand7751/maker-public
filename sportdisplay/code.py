@@ -230,14 +230,58 @@ while True:
 
     time.sleep(3)
     try:
+        print("Starting MQTT")
         # Get the retained message (wait until it shows up)
         mqtt_client.loop()
+        mqstatus = "Ok"
+        print("MQTT confirmed")
     except Exception as err:
         print("Except: {0}".format(err))
         print("Failed to pull the retained message")
+        mqstatus = "Failed"
         #wifi.reset()
-        mqtt_client.reconnect()
+        #mqtt_client.reconnect()
     time.sleep(3)
+
+    if mqstatus == "Failed":
+        try:
+            mqtt_client.reconnect()
+        except Exception as err:
+            print("Except: {0}".format(err))
+            print("Failed to reconnect to broker")
+            wifi.reset()
+            MQTT.set_socket(socket, pyportal._esp)
+            try:
+                # Set up a MiniMQTT Client
+                mqtt_client = MQTT.MQTT(broker=secrets["broker"], username=secrets["user"], password=secrets["pass"], is_ssl=False, port=16392)
+            except Exception as err:
+                print("Except: {0}".format(err))
+                print("Failed to create MQTT Client")
+                
+
+            # Setup the callback methods
+            mqtt_client.on_connect = connected
+            mqtt_client.on_disconnect = disconnected
+            mqtt_client.on_message = message
+
+            try:
+                # Connect and wait for fully established connection
+                mqtt_client.connect()
+            except Exception as err:
+                print("Except: {0}".format(err))
+                print("Failed to connect the MQTT client")
+
+            try:
+                # Get the retained message (wait until it shows up)
+                mqtt_client.loop()
+                mqstatus = "Ok"
+            except Exception as err:
+                print("Except: {0}".format(err))
+                print("Failed to pull the retained message")
+                mqstatus = "Failed"
+                #wifi.reset()
+                mqtt_client.reconnect()
+
 
     # Run the display loop if the message isn't blank
     if currentmessage != "null":
