@@ -180,7 +180,7 @@ display.show(group)
 MQTT.set_socket(socket, pyportal._esp)
 try:
     # Set up a MiniMQTT Client
-    mqtt_client = MQTT.MQTT(broker=secrets["broker"], username=secrets["user"], password=secrets["pass"], is_ssl=False, port=16392)
+    mqtt_client = MQTT.MQTT(broker=secrets["broker"], username=secrets["user"], password=secrets["pass"], client_id=secrets["clientid"], is_ssl=False, port=16392)
 except Exception as err:
     print("Except: {0}".format(err))
     print("Failed to create MQTT Client")
