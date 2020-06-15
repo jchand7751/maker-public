@@ -82,7 +82,8 @@ def displayloop():
     # Show the bike stats
     # Todo - Make this an if rides > 0
     imagedisplay("bike")
-    writemessage("Rides: %s \n Distance: %s \n Avg Watts: %s" %(summaryList["Total Rides"], summaryList["Total Ride Miles"], summaryList["Average Watts"]), 1, 90, "blue")
+    #writemessage("Rides: %s \n Distance: %s \n Avg Watts: %s" %(summaryList["Total Rides"], summaryList["Total Ride Miles"], summaryList["Average Watts"]), 1, 90, "blue")
+    writemessage("%s \n %s \n %s" %(summaryList["Total Rides"], summaryList["Total Ride Miles"], summaryList["Average Watts"]), 1, 90, "black")
     time.sleep(8)
     group.pop()
     group.pop()
@@ -91,7 +92,8 @@ def displayloop():
     # Show the run stats
     # Todo - Make this an if runs > 0
     imagedisplay("run")
-    writemessage("Runs: %s \n Distance: %s \n Avg Pace: %s" %(summaryList["Total Runs"], summaryList["Total Run Miles"], summaryList["Average Run Pace"]), 1, 90, "red")
+    #writemessage("Runs: %s \n Distance: %s \n Avg Pace: %s" %(summaryList["Total Runs"], summaryList["Total Run Miles"], summaryList["Average Run Pace"]), 1, 90, "red")
+    writemessage("%s \n %s \n %s" %(summaryList["Total Runs"], summaryList["Total Run Miles"], summaryList["Average Run Pace"]), 1, 90, "black")
     time.sleep(8)
     group.pop()
     group.pop()
@@ -99,7 +101,8 @@ def displayloop():
 
     # Show the 7 day stat page to cover the MQTT reconnect (start of next loop)
     imagedisplay("swimbikeruntop")
-    writemessage("7 Day Totals \n Activities: %s \n Time: %s" %(summaryList["Total Activities"], summaryList["Total Time"]), 1, 70, "green")
+    #writemessage("7 Day Totals \n Activities: %s \n Time: %s" %(summaryList["Total Activities"], summaryList["Total Time"]), 1, 70, "green")
+    writemessage("%s \n %s" %(summaryList["Total Activities"], summaryList["Total Time"]), 1, 70, "black")
 
 def imagedisplay(word):
     # Display a graphic from the root directory
