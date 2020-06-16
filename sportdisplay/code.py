@@ -9,6 +9,7 @@ import adafruit_esp32spi.adafruit_esp32spi_socket as socket
 import adafruit_minimqtt as MQTT
 import adafruit_pyportal
 import microcontroller
+from adafruit_bitmap_font import bitmap_font
 
 try:
     from secrets import secrets
@@ -63,12 +64,17 @@ def displayloop():
     if runcount > 0:
         group.pop()
         group.pop()
+        group.pop()
         time.sleep(1)
     else:
         # Show the 7 day stat page (only for the first run)
         imagedisplay("swimbikeruntop")
-        writemessage("7 Day Totals \n Activities: %s \n Time: %s" %(summaryList["Total Activities"], summaryList["Total Time"]), 1, 70, "green")
+        #writemessage("7 Day Totals \n Activities: %s \n Time: %s" %(summaryList["Total Activities"], summaryList["Total Time"]), 1, 70, "green")
+        #writemessage("%s \n %s" %(summaryList["Total Activities"], summaryList["Total Time"]), 1, 70, "black", "BioRhyme-Bold-75-75.bdf")
+        writemessage("%s " %(summaryList["Total Activities"]), 199, 88, "black", "BioRhyme-ExtraBold-17.bdf")
+        writemessage("%s " %(summaryList["Total Time"]), 120, 112, "black", "BioRhyme-ExtraBold-17.bdf")
         time.sleep(8)
+        group.pop()
         group.pop()
         group.pop()
         time.sleep(1)
@@ -78,13 +84,35 @@ def displayloop():
 
     # Todo - Show the swim stats
     # Todo - Make this an if swims > 0
+    imagedisplay("swim")
+    writemessage("%s" %(summaryList["Total Swim Time"]), 65, 90, "black", "BioRhyme-ExtraBold-17.bdf")
+    writemessage("%s" %(summaryList["Total Swims"]), 76, 113, "black", "BioRhyme-ExtraBold-17.bdf")
+    writemessage("%s" %(summaryList["Total Swim Yards"]), 227, 90, "black", "BioRhyme-ExtraBold-17.bdf")
+    writemessage("%s" %(summaryList["Average Swim Pace"]), 195, 113, "black", "BioRhyme-ExtraBold-17.bdf")
+    time.sleep(8)
+    group.pop()
+    group.pop()
+    group.pop()
+    group.pop()
+    group.pop()
+    time.sleep(1)
 
     # Show the bike stats
     # Todo - Make this an if rides > 0
     imagedisplay("bike")
     #writemessage("Rides: %s \n Distance: %s \n Avg Watts: %s" %(summaryList["Total Rides"], summaryList["Total Ride Miles"], summaryList["Average Watts"]), 1, 90, "blue")
-    writemessage("%s \n %s \n %s" %(summaryList["Total Rides"], summaryList["Total Ride Miles"], summaryList["Average Watts"]), 1, 90, "black")
+    #writemessage("%s \n %s \n %s" %(summaryList["Total Rides"], summaryList["Total Ride Miles"], summaryList["Average Watts"]), 115, 50, "black", "BioRhyme-Bold-75-75.bdf")
+    #New
+    writemessage("%s" %(summaryList["Total Ride Time"]), 63, 33, "black", "BioRhyme-ExtraBold-17.bdf")
+    writemessage("%s" %(summaryList["Total Rides"]), 63, 56, "black", "BioRhyme-ExtraBold-17.bdf")
+    writemessage("%s" %(summaryList["Total Ride Miles"]), 90, 79, "black", "BioRhyme-ExtraBold-17.bdf")
+    writemessage("%s" %(summaryList["Average Ride Speed"]), 102, 102, "black", "BioRhyme-ExtraBold-17.bdf")
+    writemessage("%s" %(summaryList["Average Watts"]), 102, 125, "black", "BioRhyme-ExtraBold-17.bdf")
     time.sleep(8)
+    group.pop()
+    group.pop()
+    group.pop()
+    group.pop()
     group.pop()
     group.pop()
     time.sleep(1)
@@ -93,8 +121,16 @@ def displayloop():
     # Todo - Make this an if runs > 0
     imagedisplay("run")
     #writemessage("Runs: %s \n Distance: %s \n Avg Pace: %s" %(summaryList["Total Runs"], summaryList["Total Run Miles"], summaryList["Average Run Pace"]), 1, 90, "red")
-    writemessage("%s \n %s \n %s" %(summaryList["Total Runs"], summaryList["Total Run Miles"], summaryList["Average Run Pace"]), 1, 90, "black")
+    #writemessage("%s \n %s \n %s" %(summaryList["Total Runs"], summaryList["Total Run Miles"], summaryList["Average Run Pace"]), 98, 138, "black", "BioRhyme-Bold-75-75.bdf")
+    #New
+    writemessage("%s" %(summaryList["Total Run Time"]), 63, 89, "black", "BioRhyme-ExtraBold-17.bdf")
+    writemessage("%s" %(summaryList["Total Runs"]), 63, 113, "black", "BioRhyme-ExtraBold-17.bdf")
+    writemessage("%s" %(summaryList["Total Run Miles"]), 90, 136, "black", "BioRhyme-ExtraBold-17.bdf")
+    writemessage("%s" %(summaryList["Average Run Pace"]), 58, 159, "black", "BioRhyme-ExtraBold-17.bdf")
     time.sleep(8)
+    group.pop()
+    group.pop()
+    group.pop()
     group.pop()
     group.pop()
     time.sleep(1)
@@ -102,7 +138,10 @@ def displayloop():
     # Show the 7 day stat page to cover the MQTT reconnect (start of next loop)
     imagedisplay("swimbikeruntop")
     #writemessage("7 Day Totals \n Activities: %s \n Time: %s" %(summaryList["Total Activities"], summaryList["Total Time"]), 1, 70, "green")
-    writemessage("%s \n %s" %(summaryList["Total Activities"], summaryList["Total Time"]), 1, 70, "black")
+    writemessage("%s" %(summaryList["Total Activities"]), 199, 88, "black", "BioRhyme-ExtraBold-17.bdf")
+    writemessage("%s" %(summaryList["Total Time"]), 120, 112, "black", "BioRhyme-ExtraBold-17.bdf")
+    #writemessage("%s " %(summaryList["Total Run Miles"]), 90, 136, "black", "BioRhyme-ExtraBold-17.bdf")
+    #writemessage("%s " %(summaryList["Average Run Pace"]), 58, 159, "black", "BioRhyme-ExtraBold-17.bdf")
 
 def imagedisplay(word):
     # Display a graphic from the root directory
@@ -113,10 +152,16 @@ def imagedisplay(word):
     sprite = displayio.TileGrid(picture, pixel_shader=displayio.ColorConverter())
     group.append(sprite)
     
-def writemessage(text, axisX, axisY, color):
+def writemessage(text, axisX, axisY, color, font):
+    
+    if font != "default":
+        font = bitmap_font.load_font(font)
+    else:
+        font = terminalio.FONT
     # Definition for adding a text label
-    text_group = displayio.Group(max_size=1, scale=2)
-    label = Label(terminalio.FONT, text=text)
+    text_group = displayio.Group(max_size=1, scale=1)
+    #label = Label(terminalio.FONT, text=text)
+    label = Label(font, text=text)
     # Section for label font colors
     if color == "white":
         color = 0xFFFFFF
@@ -126,6 +171,8 @@ def writemessage(text, axisX, axisY, color):
         color = 0x0000FF
     if color == "green":
         color = 0x00CC00
+    if color == "black":
+        color = 0x000000    
     label.color = color
     # Section for label background colors
     #if bgcolor == "white":
@@ -172,11 +219,12 @@ print("Connected!")
 
 ### Display Setup ###
 # Create the display group
-group = displayio.Group(max_size=3)
+group = displayio.Group(max_size=10)
 # Try to fix the weird refresh thing
-display.refresh(target_frames_per_second=60)
+#display.refresh(target_frames_per_second=60)
 # Show the initial solid color background
-splashScreen("white")
+#splashScreen("background")
+imagedisplay("background")
 display.show(group)
 
 ### MQTT Setup ###
