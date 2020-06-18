@@ -10,6 +10,7 @@ import adafruit_minimqtt as MQTT
 import adafruit_pyportal
 import microcontroller
 from adafruit_bitmap_font import bitmap_font
+import adafruit_requests as requests
 
 try:
     from secrets import secrets
@@ -26,6 +27,9 @@ wifistatus = "null"
 runcount = 0
 wifi = adafruit_esp32spi_wifimanager.ESPSPI_WiFiManager(pyportal._esp, secrets, None)
 mqtt_topic = secrets["mqtopic"]
+requests.set_socket(socket, pyportal._esp)
+headers = {'Content-Type': 'application/json'}
+URL='http://worldclockapi.com/api/json/pst/now'
 
 ### Code - Definitions ###
 
@@ -57,6 +61,65 @@ def message(client, topic, message):
     global currentmessage
     currentmessage = message
 
+def displayloop2():
+    if runcount > 0:
+        writemessage("%s " %(summaryList["Total Activities"]), 199, 88, "black", "BioRhyme-ExtraBold-17.bdf", totalsgroup)
+        writemessage("%s " %(summaryList["Total Time"]), 120, 112, "black", "BioRhyme-ExtraBold-17.bdf", totalsgroup)
+        display.show(totalsgroup)
+        clockgroup.pop()
+        clockgroup.pop()
+        clockgroup.pop()
+        time.sleep(8)
+        writemessage("%s" %(summaryList["Total Swim Time"]), 65, 90, "black", "BioRhyme-ExtraBold-17.bdf", swimgroup)
+        writemessage("%s" %(summaryList["Total Swims"]), 76, 113, "black", "BioRhyme-ExtraBold-17.bdf", swimgroup)
+        writemessage("%s" %(summaryList["Total Swim Yards"]), 227, 90, "black", "BioRhyme-ExtraBold-17.bdf", swimgroup)
+        writemessage("%s" %(summaryList["Average Swim Pace"]), 195, 113, "black", "BioRhyme-ExtraBold-17.bdf", swimgroup)
+        display.show(swimgroup)
+        totalsgroup.pop()
+        totalsgroup.pop()
+        time.sleep(8)
+        writemessage("%s" %(summaryList["Total Ride Time"]), 63, 33, "black", "BioRhyme-ExtraBold-17.bdf", bikegroup)
+        writemessage("%s" %(summaryList["Total Rides"]), 63, 56, "black", "BioRhyme-ExtraBold-17.bdf", bikegroup)
+        writemessage("%s" %(summaryList["Total Ride Miles"]), 90, 79, "black", "BioRhyme-ExtraBold-17.bdf", bikegroup)
+        writemessage("%s" %(summaryList["Average Ride Speed"]), 102, 102, "black", "BioRhyme-ExtraBold-17.bdf", bikegroup)
+        writemessage("%s" %(summaryList["Average Watts"]), 102, 125, "black", "BioRhyme-ExtraBold-17.bdf", bikegroup)
+        display.show(bikegroup)
+        swimgroup.pop()
+        swimgroup.pop()
+        swimgroup.pop()
+        swimgroup.pop()
+        time.sleep(8)
+        writemessage("%s" %(summaryList["Total Run Time"]), 63, 89, "black", "BioRhyme-ExtraBold-17.bdf", rungroup)
+        writemessage("%s" %(summaryList["Total Runs"]), 63, 113, "black", "BioRhyme-ExtraBold-17.bdf", rungroup)
+        writemessage("%s" %(summaryList["Total Run Miles"]), 90, 136, "black", "BioRhyme-ExtraBold-17.bdf", rungroup)
+        writemessage("%s" %(summaryList["Average Run Pace"]), 58, 159, "black", "BioRhyme-ExtraBold-17.bdf", rungroup)
+        display.show(rungroup)
+        bikegroup.pop()
+        bikegroup.pop()
+        bikegroup.pop()
+        bikegroup.pop()
+        bikegroup.pop()
+        time.sleep(8)
+        #writemessage("%s" %(summaryList["Total Activities"]), 199, 88, "black", "BioRhyme-ExtraBold-17.bdf", totalsgroup)
+        #writemessage("%s" %(summaryList["Total Time"]), 120, 112, "black", "BioRhyme-ExtraBold-17.bdf", totalsgroup)
+        #display.show(totalsgroup)
+        ClockSetup()
+        display.show(clockgroup)
+        rungroup.pop()
+        rungroup.pop()
+        rungroup.pop()
+        rungroup.pop()
+    else:
+        # Show the 7 day stat page (only for the first run)
+        #writemessage("%s " %(summaryList["Total Activities"]), 199, 88, "black", "BioRhyme-ExtraBold-17.bdf", totalsgroup)
+        #writemessage("%s " %(summaryList["Total Time"]), 120, 112, "black", "BioRhyme-ExtraBold-17.bdf", totalsgroup)
+        #display.show(totalsgroup)
+        #time.sleep(8)
+        ClockSetup()
+        display.show(clockgroup)
+        time.sleep(8)
+    
+
 def displayloop():
     # Definition for display looping
     # The first run won't have any images but on all the following runs pop the groups showing the last image
@@ -68,11 +131,11 @@ def displayloop():
         time.sleep(1)
     else:
         # Show the 7 day stat page (only for the first run)
-        imagedisplay("swimbikeruntop")
+        imagedisplay("swimbikeruntop", totalsgroup)
         #writemessage("7 Day Totals \n Activities: %s \n Time: %s" %(summaryList["Total Activities"], summaryList["Total Time"]), 1, 70, "green")
         #writemessage("%s \n %s" %(summaryList["Total Activities"], summaryList["Total Time"]), 1, 70, "black", "BioRhyme-Bold-75-75.bdf")
-        writemessage("%s " %(summaryList["Total Activities"]), 199, 88, "black", "BioRhyme-ExtraBold-17.bdf")
-        writemessage("%s " %(summaryList["Total Time"]), 120, 112, "black", "BioRhyme-ExtraBold-17.bdf")
+        writemessage("%s " %(summaryList["Total Activities"]), 199, 88, "black", "BioRhyme-ExtraBold-17.bdf", totalsgroup)
+        writemessage("%s " %(summaryList["Total Time"]), 120, 112, "black", "BioRhyme-ExtraBold-17.bdf", totalsgroup)
         time.sleep(8)
         group.pop()
         group.pop()
@@ -143,7 +206,7 @@ def displayloop():
     #writemessage("%s " %(summaryList["Total Run Miles"]), 90, 136, "black", "BioRhyme-ExtraBold-17.bdf")
     #writemessage("%s " %(summaryList["Average Run Pace"]), 58, 159, "black", "BioRhyme-ExtraBold-17.bdf")
 
-def imagedisplay(word):
+def imagedisplay(word, group):
     # Display a graphic from the root directory
     filename = "/" + word + ".bmp"
     file = open(filename, "rb")
@@ -152,7 +215,7 @@ def imagedisplay(word):
     sprite = displayio.TileGrid(picture, pixel_shader=displayio.ColorConverter())
     group.append(sprite)
     
-def writemessage(text, axisX, axisY, color, font):
+def writemessage(text, axisX, axisY, color, font, group):
     
     if font != "default":
         font = bitmap_font.load_font(font)
@@ -193,7 +256,7 @@ def writemessage(text, axisX, axisY, color, font):
     #group.append(label)
     group.append(text_group)
 
-def splashScreen(color):
+def splashScreen(color, group):
     # Definition for setting a background color
     splashBitmap = displayio.Bitmap(320, 240, 1)
     splashPalette = displayio.Palette(1)
@@ -211,21 +274,106 @@ def splashScreen(color):
 
 ### Code ###
 
+### Display Setup ###
+# Create the display group
+#group = displayio.Group(max_size=10)
+clockgroup = displayio.Group(max_size=10)
+swimgroup = displayio.Group(max_size=10)
+bikegroup = displayio.Group(max_size=10)
+rungroup = displayio.Group(max_size=10)
+totalsgroup = displayio.Group(max_size=10)
+# Try to fix the weird refresh thing
+#display.refresh(target_frames_per_second=60)
+# Show the initial solid color background
+#splashScreen("background")
+imagedisplay("clock", clockgroup)
+imagedisplay("swimbikeruntop", totalsgroup)
+imagedisplay("swim", swimgroup)
+imagedisplay("bike", bikegroup)
+imagedisplay("run", rungroup)
+
 ### WiFi ###
 # Connect to WiFi
 print("Connecting to WiFi...")
 wifi.connect()
 print("Connected!")
 
-### Display Setup ###
-# Create the display group
-group = displayio.Group(max_size=10)
-# Try to fix the weird refresh thing
-#display.refresh(target_frames_per_second=60)
-# Show the initial solid color background
-#splashScreen("background")
-imagedisplay("background")
-display.show(group)
+def ClockSetup():
+    ## Clock Section ##
+    #requests.set_socket(socket, pyportal._esp)
+    #headers = {'Content-Type': 'application/json'}
+    #URL='http://worldclockapi.com/api/json/pst/now'
+    #response = requests.request("get", URL, data=None, json=None, headers=headers, stream=False, timeout=1)
+    response = None
+    timecount = 0
+    while response is None:
+        try:
+            # connect
+            response = requests.request("get", URL, data=None, json=None, headers=headers, stream=False, timeout=2)
+            timecount = timecount + 1
+            print(timecount)
+            if timecount > 20:
+                response = "Failed"
+        except:
+            pass
+    fixtime = response.json()['currentDateTime']
+    fixdate = fixtime[0:10]
+    cleandate = fixdate[5:7] + "-" + fixdate[8:10] + "-" + fixdate[0:4]
+
+    uglytime = (fixtime.split(fixdate)[1])[1:len(fixtime)]
+    if int(uglytime[0:2]) > 11:
+        cleantime = str(int(uglytime[0:2]) - 12) + uglytime[2:5] + " PM"
+    else:
+        cleantime = str(int(uglytime[0:2])) + uglytime[2:5] + " AM"
+
+    if cleandate[0:2] == "01":
+        month = "January"
+    if cleandate[0:2] == "02":
+        month = "February"
+    if cleandate[0:2] == "03":
+        month = "March"
+    if cleandate[0:2] == "04":
+        month = "April"
+    if cleandate[0:2] == "05":
+        month = "May"
+    if cleandate[0:2] == "06":
+        month = "June"
+    if cleandate[0:2] == "07":
+        month = "July"
+    if cleandate[0:2] == "08":
+        month = "August"
+    if cleandate[0:2] == "09":
+        month = "September"
+    if cleandate[0:2] == "10":
+        month = "October"
+    if cleandate[0:2] == "11":
+        month = "November"
+    if cleandate[0:2] == "12":
+        month = "December"    
+
+    day = cleandate[3:5]
+
+    if int(uglytime[0:2]) > 17 and int(uglytime[0:2]) < 4:
+        timeofday = "evening"
+
+    if int(uglytime[0:2]) > 11 and int(uglytime[0:2]) < 17:
+        timeofday = "afternoon"
+
+    if int(uglytime[0:2]) > 4 and int(uglytime[0:2]) < 11:
+        timeofday = "morning"
+
+    if cleandate[4] == 1:
+        datesuffix = "st"
+    elif cleandate[4] == 2:
+        datesuffix = "nd"
+    elif cleandate[4] == 3:
+        datesuffix = "rd"
+    else:
+        datesuffix = "th"   
+
+    writemessage("Good %s!" %(timeofday), 20, 90, "black", "BioRhyme-ExtraBold-17.bdf", clockgroup)
+    writemessage("Today is %s %s %s%s" %(response.json()['dayOfTheWeek'], month, day, datesuffix), 20, 130, "black", "BioRhyme-ExtraBold-17.bdf", clockgroup)
+    writemessage("The current time is: %s" %(cleantime), 20, 170, "black", "BioRhyme-ExtraBold-17.bdf", clockgroup)
 
 ### MQTT Setup ###
 MQTT.set_socket(socket, pyportal._esp)
@@ -338,7 +486,7 @@ while True:
     if currentmessage != "null":
         print("Starting display loop")
         summaryList = eval(currentmessage)
-        displayloop()
+        displayloop2()
         print("Finishing display loop")
         runcount = runcount + 1
         print(runcount)
